@@ -85,7 +85,7 @@ const Questions = () => {
   }, []);
 
   return (
-    <section className="py-28 px-6 bg-white">
+    <section className="py-28 px-6 bg-[#F0F8FF]">
       <div className="max-w-3xl mx-auto">
 
         {/* Heading */}

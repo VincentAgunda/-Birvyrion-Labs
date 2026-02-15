@@ -161,7 +161,7 @@ const NextureWork = () => {
     <section className="py-28 bg-[#fdfdfd]">
       <div className="max-w-7xl mx-auto px-6">
 
-        <h2 className="text-4xl md:text-5xl font-semibold text-center mb-20 tracking-tight">
+        <h2 className="text-4xl md:text-5xl font-semibold text-[#002D62] text-center mb-20 tracking-tight">
           Selected Work.
         </h2>
 
