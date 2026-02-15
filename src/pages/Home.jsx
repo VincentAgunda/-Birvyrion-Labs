@@ -128,15 +128,15 @@ const Home = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: EASE }}
             >
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold leading-tight tracking-tight mb-6">
-                <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-                  Birvyrion Labs
-                </span>
+              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[80px] font-semibold leading-[1.05] tracking-tighter text-[#1d1d1f] mb-6">
+                Birvyrion Labs.
                 <br />
-                Engineering the Future.
+                <span className="text-[#6e6e73]">
+                  Engineering Future.
+                </span>
               </h1>
 
-              <p className="text-lg md:text-xl text-gray-600 max-w-lg leading-relaxed mb-10">
+              <p className="text-xl md:text-2xl leading-relaxed font-normal text-[#2A2A2A] max-w-lg mx-auto lg:mx-0 mb-10 tracking-tight">
                 We architect scalable infrastructure, intelligent automation,
                 and secure digital systems designed for performance,
                 longevity, and growth.
@@ -150,14 +150,14 @@ const Home = () => {
                 whileTap={{ scale: 0.96 }}
                 className="
                   relative px-8 py-4
-                  rounded-full
-                  bg-black text-white
-                  font-medium
+                  rounded-md
+                  bg-black text-[#6F8FA6]
+                  font-large
                   shadow-xl
                   transform-gpu
                 "
               >
-                Book Strategy Call
+                Schedule a Consultation
               </motion.button>
             </motion.div>
 
