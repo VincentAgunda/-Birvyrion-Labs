@@ -195,6 +195,17 @@ const Comprehensive = ({ onOpenModal }) => {
         features: ["Server setup", "Network security", "System monitoring"],
       },
       {
+  title: "IT Equipment Supply",
+  description: "Reliable sourcing and supply of enterprise-grade IT hardware and infrastructure.",
+  icon: Engineering,
+  features: [
+    "Laptops & desktops",
+    "Networking equipment",
+    "Servers & storage solutions"
+  ],
+},
+
+      {
         title: "Database Design",
         description: "Custom database solutions tailored to your needs.",
         icon: Storage,
