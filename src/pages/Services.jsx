@@ -1,12 +1,29 @@
-import React, { useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
-  AdminPanelSettings, Storage, BugReport, Engineering, CloudDone, DashboardCustomize, ColorLens,
-  AccountTree, Terminal, StayCurrentPortrait, BrandingWatermark, Insights, Psychology, Lightbulb,
-  Close, WbSunny, ModeNight
+  AdminPanelSettings,
+  Storage,
+  BugReport,
+  Engineering,
+  CloudDone,
+  DashboardCustomize,
+  ColorLens,
+  AccountTree,
+  Terminal,
+  StayCurrentPortrait,
+  BrandingWatermark,
+  Insights,
+  Psychology,
+  Lightbulb,
+  Close,
+  WbSunny,
+  ModeNight,
 } from "@mui/icons-material";
 
-// Service data
+/* ================================================= */
+/*                     SERVICES DATA                 */
+/* ================================================= */
+
 const services = [
   {
     icon: <AdminPanelSettings />,
@@ -17,12 +34,10 @@ const services = [
       "Network configuration and security",
       "System monitoring and optimization",
       "Disaster recovery planning",
-      "Performance tuning"
+      "Performance tuning",
     ],
     bgDark: "bg-[#5A7F6B]",
     bgLight: "bg-[#E0E9F7]",
-    imgBgDark: "bg-gray-900",
-    imgBgLight: "bg-white",
   },
   {
     icon: <Storage />,
@@ -33,12 +48,10 @@ const services = [
       "NoSQL database implementation",
       "Data modeling and optimization",
       "Database migration services",
-      "Performance tuning and indexing"
+      "Performance tuning and indexing",
     ],
     bgDark: "bg-[#5D5179]",
     bgLight: "bg-[#EDEAF2]",
-    imgBgDark: "bg-gray-900",
-    imgBgLight: "bg-white",
   },
   {
     icon: <BugReport />,
@@ -49,12 +62,10 @@ const services = [
       "Automated testing solutions",
       "Performance and load testing",
       "Security vulnerability testing",
-      "QA process implementation"
+      "QA process implementation",
     ],
     bgDark: "bg-[#8C5E58]",
     bgLight: "bg-[#F5EAE8]",
-    imgBgDark: "bg-gray-900",
-    imgBgLight: "bg-white",
   },
   {
     icon: <Engineering />,
@@ -65,12 +76,10 @@ const services = [
       "Bug fixes and troubleshooting",
       "Performance monitoring",
       "Technical support",
-      "Documentation updates"
+      "Documentation updates",
     ],
     bgDark: "bg-[#4D7C8A]",
     bgLight: "bg-[#E4F0F3]",
-    imgBgDark: "bg-gray-900",
-    imgBgLight: "bg-white",
   },
   {
     icon: <CloudDone />,
@@ -81,12 +90,10 @@ const services = [
       "AWS/Azure/GCP implementation",
       "Cost optimization strategies",
       "Security and compliance",
-      "DevOps automation"
+      "DevOps automation",
     ],
     bgDark: "bg-[#5A7F6B]",
     bgLight: "bg-[#E0ECF1]",
-    imgBgDark: "bg-gray-900",
-    imgBgLight: "bg-white",
   },
   {
     icon: <DashboardCustomize />,
@@ -97,12 +104,10 @@ const services = [
       "Wireframing and prototyping",
       "Interaction design",
       "Usability evaluation",
-      "Design system creation"
+      "Design system creation",
     ],
     bgDark: "bg-[#7D6B8D]",
     bgLight: "bg-[#F1EDF5]",
-    imgBgDark: "bg-gray-900",
-    imgBgLight: "bg-white",
   },
   {
     icon: <ColorLens />,
@@ -113,12 +118,10 @@ const services = [
       "Illustration and iconography",
       "Typography and layout",
       "Photo editing and manipulation",
-      "Visual content creation"
+      "Visual content creation",
     ],
     bgDark: "bg-[#9D6B53]",
     bgLight: "bg-[#F7EFEA]",
-    imgBgDark: "bg-gray-900",
-    imgBgLight: "bg-white",
   },
   {
     icon: <AccountTree />,
@@ -129,12 +132,10 @@ const services = [
       "Configuration management",
       "Patch management",
       "System health monitoring",
-      "Incident management"
+      "Incident management",
     ],
     bgDark: "bg-[#4A6FA5]",
     bgLight: "bg-[#E8F3EC]",
-    imgBgDark: "bg-gray-900",
-    imgBgLight: "bg-white",
   },
   {
     icon: <Terminal />,
@@ -145,12 +146,10 @@ const services = [
       "E-commerce solutions",
       "CMS integration (WordPress, Shopify)",
       "API development & integration",
-      "Performance optimization"
+      "Performance optimization",
     ],
     bgDark: "bg-[#7B93AA]",
     bgLight: "bg-[#E3EDF7]",
-    imgBgDark: "bg-gray-900",
-    imgBgLight: "bg-white",
   },
   {
     icon: <StayCurrentPortrait />,
@@ -161,12 +160,10 @@ const services = [
       "React Native cross-platform apps",
       "UI/UX mobile design",
       "App store optimization",
-      "Push notification systems"
+      "Push notification systems",
     ],
     bgDark: "bg-[#E7E1DA]",
-    bgLight: "bg-[#f9f6f2]",
-    imgBgDark: "bg-gray-800",
-    imgBgLight: "bg-white",
+    bgLight: "bg-[#F9F6F2]",
   },
   {
     icon: <BrandingWatermark />,
@@ -177,12 +174,10 @@ const services = [
       "Visual identity systems",
       "Marketing collateral",
       "Packaging design",
-      "Brand guidelines"
+      "Brand guidelines",
     ],
     bgDark: "bg-[#5E7B80]",
-    bgLight: "bg-[#dfeae7]",
-    imgBgDark: "bg-gray-900",
-    imgBgLight: "bg-white",
+    bgLight: "bg-[#DFEAE7]",
   },
   {
     icon: <Insights />,
@@ -193,12 +188,10 @@ const services = [
       "Content marketing plans",
       "SEO optimization",
       "Email marketing campaigns",
-      "Analytics & reporting"
+      "Analytics & reporting",
     ],
     bgDark: "bg-[#22344C]",
-    bgLight: "bg-[#e0e5ea]",
-    imgBgDark: "bg-gray-800",
-    imgBgLight: "bg-white",
+    bgLight: "bg-[#E0E5EA]",
   },
   {
     icon: <Psychology />,
@@ -209,12 +202,10 @@ const services = [
       "Machine learning models",
       "Chatbot development",
       "Predictive analytics",
-      "Process automation"
+      "Process automation",
     ],
     bgDark: "bg-[#6D466B]",
-    bgLight: "bg-[#f0e6ef]",
-    imgBgDark: "bg-gray-900",
-    imgBgLight: "bg-white",
+    bgLight: "bg-[#F0E6EF]",
   },
   {
     icon: <Lightbulb />,
@@ -225,125 +216,140 @@ const services = [
       "System architecture design",
       "Cloud migration strategy",
       "DevOps implementation",
-      "Team training & mentoring"
+      "Team training & mentoring",
     ],
     bgDark: "bg-[#3A5A40]",
-    bgLight: "bg-[#e6efe7]",
-    imgBgDark: "bg-gray-800",
-    imgBgLight: "bg-white",
+    bgLight: "bg-[#E6EFE7]",
   },
 ];
 
-// Animation variants for modal
-const modalVariants = {
-  hidden: { opacity: 0, scale: 0.9 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: { duration: 0.3, ease: "easeOut", staggerChildren: 0.05 }
-  }
+/* ================================================= */
+/*                ANIMATION SETTINGS                 */
+/* ================================================= */
+
+const spring = {
+  type: "spring",
+  stiffness: 85,
+  damping: 18,
+  mass: 0.9,
 };
 
-// Service card
-const ServiceSection = ({ service, index, darkMode, openServiceDetailsModal }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 40 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, amount: 0.2 }}
-    transition={{ duration: 0.8, ease: "easeOut" }}
-    className={`relative overflow-hidden ${
-      darkMode ? service.bgDark : service.bgLight
-    } rounded-[50px] flex flex-col-reverse md:flex-row items-center justify-between px-6 md:px-12 py-16 md:py-20 will-change-transform`}
-  >
-    <div
-      className={`relative w-60 h-60 md:w-80 md:h-80 rounded-full ${
-        darkMode ? service.imgBgDark : service.imgBgLight
-      } shadow-xl mb-8 md:mb-0 ${
-        index % 2 === 0 ? "md:mr-12" : "md:ml-12"
-      } flex items-center justify-center`}
-    >
-      <div className={`text-5xl md:text-6xl ${darkMode ? "text-white" : "text-black"}`}>
-        {React.cloneElement(service.icon, { style: { fontSize: "inherit" } })}
-      </div>
-    </div>
-    <div
-      className={`flex-1 max-w-xl text-center md:text-left ${
-        index % 2 !== 0 ? "md:order-first md:text-right" : ""
+/* ================================================= */
+/*                 SERVICE COMPONENT                 */
+/* ================================================= */
+
+const ServiceCard = ({ service, darkMode, openModal }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 70 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.25 }}
+      transition={spring}
+      whileHover={{ scale: 1.015 }}
+      className={`relative overflow-hidden rounded-[60px] px-8 md:px-16 py-24 flex flex-col md:flex-row items-center justify-between gap-14 shadow-[0_40px_100px_rgba(0,0,0,0.08)] ${
+        darkMode ? service.bgDark : service.bgLight
       }`}
     >
-      <h3 className={`text-2xl md:text-3xl font-normal mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>
-        {service.title}
-      </h3>
-      <p className={`text-base md:text-lg mb-6 ${darkMode ? "text-white/80" : "text-gray-700"}`}>
-        {service.desc}
-      </p>
-      <button
-        onClick={() => openServiceDetailsModal(service)}
-        className="bg-yellow-400 hover:bg-yellow-300 text-black font-semibold px-5 py-2 rounded-full transition-transform duration-300 hover:scale-105 active:scale-95"
-      >
-        Show me more
-      </button>
-    </div>
-  </motion.div>
-);
+      {/* Soft glow overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-40 pointer-events-none" />
 
-const ServicesPage = () => {
+      {/* Icon */}
+      <motion.div
+        whileHover={{ scale: 1.05 }}
+        transition={spring}
+        className={`w-64 h-64 md:w-80 md:h-80 rounded-full backdrop-blur-xl ${
+          darkMode ? "bg-white/10" : "bg-white/70"
+        } flex items-center justify-center shadow-2xl`}
+      >
+        <div className={`text-6xl ${darkMode ? "text-white" : "text-black"}`}>
+          {React.cloneElement(service.icon, {
+            style: { fontSize: "inherit" },
+          })}
+        </div>
+      </motion.div>
+
+      {/* Text */}
+      <div className="flex-1 max-w-xl text-center md:text-left">
+        <h3 className="text-3xl md:text-4xl font-medium tracking-tight mb-6">
+          {service.title}
+        </h3>
+
+        <p className="text-lg leading-relaxed opacity-80 mb-8">
+          {service.desc}
+        </p>
+
+        <motion.button
+          whileTap={{ scale: 0.96 }}
+          whileHover={{ scale: 1.05 }}
+          transition={spring}
+          onClick={() => openModal(service)}
+          className="px-8 py-3 rounded-full bg-black text-white dark:bg-white dark:text-black font-medium shadow-xl"
+        >
+          Learn More
+        </motion.button>
+      </div>
+    </motion.div>
+  );
+};
+
+/* ================================================= */
+/*                     MAIN PAGE                     */
+/* ================================================= */
+
+const Services = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
+  const shouldReduceMotion = useReducedMotion();
 
-  const openServiceDetailsModal = (service) => {
-    setSelectedService(service);
-    document.body.style.overflow = "hidden";
-  };
-
-  const closeServiceDetailsModal = () => {
-    setSelectedService(null);
-    document.body.style.overflow = "auto";
-  };
+  useEffect(() => {
+    document.body.style.overflow = selectedService ? "hidden" : "auto";
+  }, [selectedService]);
 
   return (
-    <section className={`${darkMode ? "bg-black" : "bg-white"} min-h-screen transition-colors duration-500`}>
-      <style>{`
-        html { scroll-behavior: smooth; }
-        * { -webkit-font-smoothing: antialiased; backface-visibility: hidden; }
-      `}</style>
+    <section
+  className={`${
+    darkMode ? "bg-black text-white" : "bg-white text-black"
+  } min-h-screen transition-colors duration-700`}
+>
+  <div className="max-w-8xl mx-auto px-6 md:px-12 pt-10 pb-32">
+    
+    {/* Header & Toggle Container */}
+    <div className="flex flex-row justify-between items-center mb-24 md:mb-36">
+      <motion.h1
+        initial={shouldReduceMotion ? {} : { opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={spring}
+        className="text-4xl md:text-6xl font-semibold tracking-tight text-[#6e6e73]"
+      >
+        services
+      </motion.h1>
 
-      <div className="max-w-7xl mx-auto py-20 px-4 md:px-8">
-        <div className="flex justify-end mb-6">
-          <button
-            onClick={() => setDarkMode((prev) => !prev)}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-full text-sm transition-all"
-          >
-            {darkMode ? <WbSunny /> : <ModeNight />}
-            {darkMode ? "Light Mode" : "Dark Mode"}
-          </button>
-        </div>
+      <motion.button
+        whileTap={{ scale: 0.95 }}
+        onClick={() => setDarkMode(!darkMode)}
+        className="flex items-center gap-2 px-5 py-2 rounded-full bg-gray-200 dark:bg-white/10 backdrop-blur-md h-fit"
+      >
+        {darkMode ? <WbSunny /> : <ModeNight />}
+        <span className="hidden sm:inline">
+          {darkMode ? "Light Mode" : "Dark Mode"}
+        </span>
+      </motion.button>
+    </div>
 
-        <motion.h2
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className={`text-4xl md:text-5xl font-medium text-center mb-24 tracking-tight ${
-            darkMode ? "text-white" : "text-gray-900"
-          }`}
-        >
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-            Services
-          </span>
-        </motion.h2>
+    {/* Services List */}
+    <div className="space-y-32">
+      {services.map((service, index) => (
+        <ServiceCard
+          key={index}
+          service={service}
+          darkMode={darkMode}
+          openModal={setSelectedService}
+        />
+      ))}
+    </div>
+  </div>
 
-        <div className="space-y-24">
-          {services.map((service, index) => (
-            <ServiceSection
-              key={index}
-              service={service}
-              index={index}
-              darkMode={darkMode}
-              openServiceDetailsModal={openServiceDetailsModal}
-            />
-          ))}
-        </div>
-      </div>
+      {/* ================= MODAL ================= */}
 
       <AnimatePresence>
         {selectedService && (
@@ -351,56 +357,50 @@ const ServicesPage = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-60 backdrop-blur-sm"
-            onClick={closeServiceDetailsModal}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xl p-6"
+            onClick={() => setSelectedService(null)}
           >
             <motion.div
-              variants={modalVariants}
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              className={`relative max-w-2xl w-full rounded-2xl shadow-2xl flex flex-col max-h-[90vh] ${
-                darkMode ? "bg-gray-900" : "bg-white"
-              } p-8 overflow-y-auto`}
+              initial={{ y: 80, opacity: 0, scale: 0.95 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: 60, opacity: 0, scale: 0.95 }}
+              transition={spring}
               onClick={(e) => e.stopPropagation()}
+              className={`w-full max-w-2xl rounded-[40px] p-10 shadow-[0_40px_120px_rgba(0,0,0,0.25)] ${
+                darkMode
+                  ? "bg-white/10 backdrop-blur-2xl text-white"
+                  : "bg-white text-black"
+              }`}
             >
-              <button
-                onClick={closeServiceDetailsModal}
-                className={`absolute top-3 right-3 z-20 p-2 rounded-full ${
-                  darkMode
-                    ? "text-white/70 hover:text-white hover:bg-white/10"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-black/10"
-                }`}
-              >
-                <Close style={{ fontSize: 24 }} />
-              </button>
+              <div className="flex justify-between items-start mb-8">
+                <h2 className="text-3xl font-semibold tracking-tight">
+                  {selectedService.title}
+                </h2>
 
-              <h2
-                className={`text-2xl md:text-3xl font-bold mb-4 ${
-                  darkMode ? "text-white" : "text-gray-900"
-                }`}
-              >
-                {selectedService.title}
-              </h2>
-              <p className={`${darkMode ? "text-white/80" : "text-gray-700"} mb-6`}>
+                <button
+                  onClick={() => setSelectedService(null)}
+                  className="p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition"
+                >
+                  <Close />
+                </button>
+              </div>
+
+              <p className="mb-8 text-lg opacity-80">
                 {selectedService.desc}
               </p>
 
-              <ul className="space-y-3">
+              <ul className="space-y-4">
                 {selectedService.details.map((item, i) => (
-                  <li
+                  <motion.li
                     key={i}
-                    className={`flex items-start text-base ${
-                      darkMode ? "text-white/90" : "text-gray-700"
-                    }`}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    className="flex items-start gap-3"
                   >
-                    <span
-                      className={`inline-block w-2 h-2 rounded-full mt-2 mr-3 ${
-                        darkMode ? "bg-yellow-400" : "bg-yellow-500"
-                      }`}
-                    ></span>
+                    <span className="w-2 h-2 mt-2 rounded-full bg-current opacity-60" />
                     {item}
-                  </li>
+                  </motion.li>
                 ))}
               </ul>
             </motion.div>
@@ -411,4 +411,4 @@ const ServicesPage = () => {
   );
 };
 
-export default ServicesPage;
+export default Services;

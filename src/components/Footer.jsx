@@ -160,7 +160,7 @@ Birvyrion Labs</h3>
         {/* Copyright Section */}
         <div className="mt-12 pt-6 border-t border-gray-800 text-center">
           <p className="text-xs text-gray-500">
-            &copy; {new Date().getFullYear()} Nexture Digital. All rights reserved.
+            &copy; {new Date().getFullYear()} BVL Labs. All rights reserved.
             <span className="mx-2">|</span>
             <a href="/privacy-policy" className="hover:text-indigo-400 transition-colors duration-200">
               Privacy Policy

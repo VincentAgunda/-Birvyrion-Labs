@@ -8,10 +8,10 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
   { path: "/", label: "Home" },
-  { path: "/about", label: "About" },
+  // { path: "/about", label: "About" },
   { path: "/services", label: "Services" },
   { path: "/pricing", label: "Pricing" },
-  { path: "/blogs", label: "Blogs" },
+  //{ path: "/blogs", label: "Blogs" },
 ];
 
 const Header = React.memo(({ user }) => {
