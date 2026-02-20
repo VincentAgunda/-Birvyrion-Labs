@@ -7,7 +7,6 @@ import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
 
 import About from "./pages/About";
-import Services from "./pages/Services";
 import Pricing from "./pages/Pricing";
 import Home from "./pages/Home";
 import Blogs from "./pages/Blogs";
@@ -53,7 +52,6 @@ function App() {
       <ScrollToTop />
       <Header />
 
-      {/* FIXED: Proper AnimatePresence usage */}
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
 
@@ -83,21 +81,6 @@ function App() {
                 className="page-content"
               >
                 <About />
-              </motion.div>
-            }
-          />
-
-          <Route
-            path="/services"
-            element={
-              <motion.div
-                variants={pageVariants}
-                initial="initial"
-                animate="animate"
-                exit="exit"
-                className="page-content"
-              >
-                <Services />
               </motion.div>
             }
           />
@@ -137,7 +120,6 @@ function App() {
 
       <Footer />
 
-      {/* ✅ VALID STYLE TAG (Removed jsx & global) */}
       <style>
         {`
           @keyframes fadePulse {

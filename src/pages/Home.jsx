@@ -1,4 +1,5 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import {
   motion,
   AnimatePresence,
@@ -10,6 +11,7 @@ import { Close } from "@mui/icons-material";
 import Comprehensive from "./Comprehensive";
 import NextureWork from "./NextureWork";
 import Questions from "./Questions";
+import Services from "./Services";
 import Contact from "./Contact";
 
 /* -------------------------------------------------- */
@@ -74,6 +76,19 @@ const Home = () => {
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState("");
   const formRef = useRef();
+  const location = useLocation();
+
+  // Handle Hash Scrolling on load or route change
+  useEffect(() => {
+    if (location.hash === "#services") {
+      setTimeout(() => {
+        const element = document.getElementById("services-section");
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    }
+  }, [location]);
 
   const handleOpenModal = useCallback(() => {
     setShowModal(true);
@@ -129,7 +144,7 @@ const Home = () => {
               transition={{ duration: 1, ease: EASE }}
             >
               <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[80px] font-semibold leading-[1.05] tracking-tighter text-[#1d1d1f] mb-6">
-                Birvyrion Labs.
+                Birvyrion.
                 <br />
                 <span className="text-[#6e6e73]">
                   Engineering Future.
@@ -168,6 +183,12 @@ const Home = () => {
         <Comprehensive onOpenModal={handleOpenModal} />
         <NextureWork />
         <Questions />
+        
+        {/* Embedded Services below Questions - scroll-mt-24 prevents the header from covering text */}
+        <div id="services-section" className="scroll-mt-24">
+          <Services />
+        </div>
+
         <Contact />
 
         {/* -------------------------------------------------- */}

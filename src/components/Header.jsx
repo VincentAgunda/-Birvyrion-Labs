@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { FaSearch, FaUserCircle, FaBars, FaTimes } from "react-icons/fa"; // Removed FaMoon, FaSun
-import { FiCommand } from "react-icons/fi";
+import { FaSearch, FaUserCircle, FaBars, FaTimes } from "react-icons/fa"; 
 import { Link, useLocation } from "react-router-dom";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
@@ -8,31 +7,26 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
   { path: "/", label: "Home" },
-  // { path: "/about", label: "About" },
-  { path: "/services", label: "Services" },
+  { path: "/#services", label: "Services" },
   { path: "/pricing", label: "Pricing" },
-  //{ path: "/blogs", label: "Blogs" },
 ];
 
 const Header = React.memo(({ user }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  // const [darkMode, setDarkMode] = useState(false); // Removed dark mode state
   const [scrollY, setScrollY] = useState(0);
   const dropdownRef = useRef(null);
   const menuRef = useRef(null);
   const searchRef = useRef(null);
   const location = useLocation();
 
-  // Close all menus
   const closeAllMenus = useCallback(() => {
     setDropdownOpen(false);
     setMobileMenuOpen(false);
     setSearchOpen(false);
   }, []);
 
-  // Handle logout
   const handleLogout = useCallback(async () => {
     try {
       await signOut(auth);
@@ -42,67 +36,90 @@ const Header = React.memo(({ user }) => {
     }
   }, [closeAllMenus]);
 
-  // Toggle mobile menu
   const toggleMobileMenu = useCallback(() => {
     setMobileMenuOpen((prev) => !prev);
     setDropdownOpen(false);
     setSearchOpen(false);
   }, []);
 
-  // Toggle search
   const toggleSearch = useCallback(() => {
     setSearchOpen((prev) => !prev);
     setDropdownOpen(false);
     setMobileMenuOpen(false);
   }, []);
 
-  // Removed toggleDarkMode and its associated useEffect for 'document.documentElement.classList'
+  // Custom Click Handler for Hash Links & Home
+  const handleNavClick = useCallback((e, path) => {
+    if (path === "/") {
+      if (location.pathname === "/") {
+        e.preventDefault(); // Stop default jump
+        window.scrollTo({ top: 0, behavior: "smooth" }); // Smooth scroll to top
+        window.history.pushState(null, '', '/'); // Clean up URL hash visually
+      }
+    } else if (path.startsWith("/#") && location.pathname === "/") {
+      e.preventDefault();
+      const id = path.substring(2);
+      const element = document.getElementById(id + "-section");
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+        window.history.pushState(null, '', path);
+      }
+    }
+    closeAllMenus();
+  }, [location.pathname, closeAllMenus]);
 
-  // Memoized navigation links
   const renderNavLinks = useMemo(() => (
-    navLinks.map((link) => (
-      <li key={link.path}>
-        <Link
-          to={link.path}
-          className={`relative px-2 py-1 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 group ${
-            location.pathname === link.path ? "font-medium text-gray-900 dark:text-white" : ""
-          }`}
-          onClick={closeAllMenus}
-        >
-          {link.label}
-          <span className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300 ${
-            location.pathname === link.path ? "w-full" : "w-0 group-hover:w-full"
-          }`}></span>
-        </Link>
-      </li>
-    ))
-  ), [closeAllMenus, location.pathname]);
+    navLinks.map((link) => {
+      const isActive = location.pathname === link.path || 
+                       (link.path === '/#services' && location.hash === '#services');
+                       
+      return (
+        <li key={link.path}>
+          <Link
+            to={link.path}
+            className={`relative px-2 py-1 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 group ${
+              isActive ? "font-medium text-gray-900 dark:text-white" : ""
+            }`}
+            onClick={(e) => handleNavClick(e, link.path)}
+          >
+            {link.label}
+            <span className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300 ${
+              isActive ? "w-full" : "w-0 group-hover:w-full"
+            }`}></span>
+          </Link>
+        </li>
+      );
+    })
+  ), [handleNavClick, location.pathname, location.hash]);
 
-  // Memoized mobile menu links
   const renderMobileMenuLinks = useMemo(() => (
-    navLinks.map((link, index) => (
-      <motion.li
-        key={link.path}
-        initial={{ x: 20, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ delay: index * 0.05 + 0.1 }}
-      >
-        <Link
-          to={link.path}
-          className={`block py-2 px-4 rounded-lg transition-colors text-sm ${
-            location.pathname === link.path 
-              ? "bg-gradient-to-r from-blue-500/10 to-purple-500/10 text-blue-600 dark:text-blue-400"
-              : "text-gray-700 dark:text-gray-300 hover:bg-gray-100/50 dark:hover:bg-gray-700/50"
-          }`}
-          onClick={closeAllMenus}
+    navLinks.map((link, index) => {
+      const isActive = location.pathname === link.path || 
+                       (link.path === '/#services' && location.hash === '#services');
+                       
+      return (
+        <motion.li
+          key={link.path}
+          initial={{ x: 20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: index * 0.05 + 0.1 }}
         >
-          {link.label}
-        </Link>
-      </motion.li>
-    ))
-  ), [closeAllMenus, location.pathname]);
+          <Link
+            to={link.path}
+            className={`block py-2 px-4 rounded-lg transition-colors text-sm ${
+              isActive 
+                ? "bg-gradient-to-r from-blue-500/10 to-purple-500/10 text-blue-600 dark:text-blue-400"
+                : "text-gray-700 dark:text-gray-300 hover:bg-gray-100/50 dark:hover:bg-gray-700/50"
+            }`}
+            onClick={(e) => handleNavClick(e, link.path)}
+          >
+            {link.label}
+          </Link>
+        </motion.li>
+      );
+    })
+  ), [handleNavClick, location.pathname, location.hash]);
 
-  // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -122,7 +139,6 @@ const Header = React.memo(({ user }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Track scroll position for header effects
   useEffect(() => {
     const handleScroll = () => {
       setScrollY(window.scrollY);
@@ -131,7 +147,6 @@ const Header = React.memo(({ user }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.ctrlKey && e.key === 'k') {
@@ -156,28 +171,25 @@ const Header = React.memo(({ user }) => {
         transition={{ duration: 0.5 }}
       >
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-          {/* Logo */}
           <motion.div 
             className="flex items-center"
             whileHover={{ scale: 1.05 }}
           >
             <Link 
               to="/" 
-              onClick={closeAllMenus}
-              className="text-xl font-bold bg-[#2F4F66] bg-clip-text text-transparent"
+              onClick={(e) => handleNavClick(e, "/")}
+              className="text-xl font-bold bg-[#6e6e73] bg-clip-text text-transparent"
             >
               BVL
+              {/* Logo Text */}
             </Link>
           </motion.div>
 
-          {/* Desktop Navigation */}
           <ul className="hidden md:flex space-x-6 items-center">
             {renderNavLinks}
           </ul>
 
-          {/* Right Side Controls */}
           <div className="flex items-center space-x-4">
-            {/* Search Button */}
             <motion.div 
               className="relative"
               ref={searchRef}
@@ -216,9 +228,6 @@ const Header = React.memo(({ user }) => {
               </AnimatePresence>
             </motion.div>
 
-            {/* Removed Dark Mode Toggle */}
-
-            {/* User Menu */}
             <div className="relative" ref={dropdownRef}>
               {user ? (
                 <>
@@ -280,7 +289,6 @@ const Header = React.memo(({ user }) => {
               )}
             </div>
 
-            {/* Mobile Menu Button */}
             <motion.button
               className="md:hidden focus:outline-none p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               onClick={toggleMobileMenu}
@@ -297,7 +305,6 @@ const Header = React.memo(({ user }) => {
           </div>
         </nav>
 
-        {/* Mobile Menu */}
         <AnimatePresence>
           {mobileMenuOpen && (
             <>
@@ -343,8 +350,6 @@ const Header = React.memo(({ user }) => {
                 <ul className="space-y-2">
                   {renderMobileMenuLinks}
 
-                  {/* Removed Dark Mode Toggle from mobile menu */}
-
                   {user && (
                     <>
                       {user.email === "admin@loreinedigital.com" && (
@@ -383,7 +388,6 @@ const Header = React.memo(({ user }) => {
         </AnimatePresence>
       </motion.header>
 
-      {/* Spacer for fixed header */}
       <div className="h-16"></div>
     </>
   );
