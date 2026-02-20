@@ -21,7 +21,7 @@ import {
 } from "@mui/icons-material";
 
 /* ================================================= */
-/*                     SERVICES DATA                 */
+/* SERVICES DATA                  */
 /* ================================================= */
 
 const services = [
@@ -224,40 +224,58 @@ const services = [
 ];
 
 /* ================================================= */
-/*                ANIMATION SETTINGS                 */
+/* ANIMATION SETTINGS                 */
 /* ================================================= */
 
-const spring = {
+// Card hover & scroll animations
+const cardSpring = {
   type: "spring",
-  stiffness: 85,
-  damping: 18,
-  mass: 0.9,
+  stiffness: 100,
+  damping: 20,
+  mass: 1,
+};
+
+// Apple-like Critically Damped Spring for the Modal
+// High stiffness + calculated damping removes wobble while keeping it snappy.
+// restDelta/restSpeed forces the animation to snap precisely at the end.
+const appleSpring = {
+  type: "spring",
+  stiffness: 350,
+  damping: 32,
+  mass: 0.8,
+  restDelta: 0.001, 
+  restSpeed: 0.001, 
+};
+
+// Fluid ease out for fading elements (like backdrops)
+const fadeTransition = {
+  duration: 0.3,
+  ease: [0.32, 0.72, 0, 1], // Apple-like ease-out curve
 };
 
 /* ================================================= */
-/*                 SERVICE COMPONENT                 */
+/* SERVICE COMPONENT                  */
 /* ================================================= */
 
 const ServiceCard = ({ service, darkMode, openModal }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 70 }}
+      initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.25 }}
-      transition={spring}
-      whileHover={{ scale: 1.015 }}
-      className={`relative overflow-hidden rounded-[60px] px-8 md:px-16 py-24 flex flex-col md:flex-row items-center justify-between gap-14 shadow-[0_40px_100px_rgba(0,0,0,0.08)] ${
+      viewport={{ once: true, amount: 0.2 }}
+      transition={cardSpring}
+      whileHover={{ scale: 1.01 }}
+      className={`relative overflow-hidden rounded-[48px] px-8 md:px-16 py-20 flex flex-col md:flex-row items-center justify-between gap-12 shadow-[0_20px_60px_rgba(0,0,0,0.06)] ${
         darkMode ? service.bgDark : service.bgLight
       }`}
+      style={{ willChange: "transform, opacity" }}
     >
-      {/* Soft glow overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-40 pointer-events-none" />
 
-      {/* Icon */}
       <motion.div
-        whileHover={{ scale: 1.05 }}
-        transition={spring}
-        className={`w-64 h-64 md:w-80 md:h-80 rounded-full backdrop-blur-xl ${
+        whileHover={{ scale: 1.04 }}
+        transition={cardSpring}
+        className={`w-56 h-56 md:w-72 md:h-72 rounded-full backdrop-blur-xl ${
           darkMode ? "bg-white/10" : "bg-white/70"
         } flex items-center justify-center shadow-2xl`}
       >
@@ -268,9 +286,8 @@ const ServiceCard = ({ service, darkMode, openModal }) => {
         </div>
       </motion.div>
 
-      {/* Text */}
-      <div className="flex-1 max-w-xl text-center md:text-left">
-        <h3 className="text-3xl md:text-4xl font-medium tracking-tight mb-6">
+      <div className="flex-1 max-w-xl text-center md:text-left z-10">
+        <h3 className="text-3xl md:text-4xl font-semibold tracking-tight mb-5">
           {service.title}
         </h3>
 
@@ -279,11 +296,11 @@ const ServiceCard = ({ service, darkMode, openModal }) => {
         </p>
 
         <motion.button
-          whileTap={{ scale: 0.96 }}
-          whileHover={{ scale: 1.05 }}
-          transition={spring}
+          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.03 }}
+          transition={cardSpring}
           onClick={() => openModal(service)}
-          className="px-8 py-3 rounded-full bg-black text-white dark:bg-white dark:text-black font-medium shadow-xl"
+          className="px-8 py-3.5 rounded-full bg-black text-white dark:bg-white dark:text-black font-medium shadow-lg"
         >
           Learn More
         </motion.button>
@@ -293,7 +310,7 @@ const ServiceCard = ({ service, darkMode, openModal }) => {
 };
 
 /* ================================================= */
-/*                     MAIN PAGE                     */
+/* MAIN PAGE                      */
 /* ================================================= */
 
 const Services = () => {
@@ -301,53 +318,58 @@ const Services = () => {
   const [selectedService, setSelectedService] = useState(null);
   const shouldReduceMotion = useReducedMotion();
 
+  // Prevent background scrolling when modal is open
   useEffect(() => {
-    document.body.style.overflow = selectedService ? "hidden" : "auto";
+    if (selectedService) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
   }, [selectedService]);
 
   return (
     <section
-  className={`${
-    darkMode ? "bg-black text-white" : "bg-white text-black"
-  } min-h-screen transition-colors duration-700`}
->
-  <div className="max-w-8xl mx-auto px-6 md:px-12 pt-10 pb-32">
-    
-    {/* Header & Toggle Container */}
-    <div className="flex flex-row justify-between items-center mb-24 md:mb-36">
-      <motion.h1
-        initial={shouldReduceMotion ? {} : { opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={spring}
-        className="text-4xl md:text-6xl font-semibold tracking-tight text-[#6e6e73]"
-      >
-        services
-      </motion.h1>
+      className={`${
+        darkMode ? "bg-black text-white" : "bg-[#fbfbfd] text-black"
+      } min-h-screen transition-colors duration-700`}
+    >
+      <div className="max-w-7xl mx-auto px-6 md:px-12 pt-16 pb-32">
+        <div className="flex flex-row justify-between items-center mb-20 md:mb-28">
+          <motion.h1
+            initial={shouldReduceMotion ? {} : { opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={cardSpring}
+            className="text-4xl md:text-6xl font-semibold tracking-tight text-[#6e6e73]"
+          >
+            Services.
+          </motion.h1>
 
-      <motion.button
-        whileTap={{ scale: 0.95 }}
-        onClick={() => setDarkMode(!darkMode)}
-        className="flex items-center gap-2 px-5 py-2 rounded-full bg-gray-200 dark:bg-white/10 backdrop-blur-md h-fit"
-      >
-        {darkMode ? <WbSunny /> : <ModeNight />}
-        <span className="hidden sm:inline">
-          {darkMode ? "Light Mode" : "Dark Mode"}
-        </span>
-      </motion.button>
-    </div>
+          <motion.button
+            whileTap={{ scale: 0.93 }}
+            onClick={() => setDarkMode(!darkMode)}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-md h-fit transition-colors hover:bg-black/10 dark:hover:bg-white/20"
+          >
+            {darkMode ? <WbSunny fontSize="small" /> : <ModeNight fontSize="small" />}
+            <span className="hidden sm:inline font-medium text-sm">
+              {darkMode ? "Light" : "Dark"}
+            </span>
+          </motion.button>
+        </div>
 
-    {/* Services List */}
-    <div className="space-y-32">
-      {services.map((service, index) => (
-        <ServiceCard
-          key={index}
-          service={service}
-          darkMode={darkMode}
-          openModal={setSelectedService}
-        />
-      ))}
-    </div>
-  </div>
+        <div className="space-y-24">
+          {services.map((service, index) => (
+            <ServiceCard
+              key={index}
+              service={service}
+              darkMode={darkMode}
+              openModal={setSelectedService}
+            />
+          ))}
+        </div>
+      </div>
 
       {/* ================= MODAL ================= */}
 
@@ -357,52 +379,63 @@ const Services = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xl p-6"
+            transition={fadeTransition}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md p-4 sm:p-6"
             onClick={() => setSelectedService(null)}
           >
             <motion.div
-              initial={{ y: 80, opacity: 0, scale: 0.95 }}
-              animate={{ y: 0, opacity: 1, scale: 1 }}
-              exit={{ y: 60, opacity: 0, scale: 0.95 }}
-              transition={spring}
+              // Apple typically scales up from slightly smaller (0.85) to full size (1)
+              initial={{ opacity: 0, scale: 0.85, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 10 }}
+              transition={appleSpring}
               onClick={(e) => e.stopPropagation()}
-              className={`w-full max-w-2xl rounded-[40px] p-10 shadow-[0_40px_120px_rgba(0,0,0,0.25)] ${
+              className={`w-full max-w-2xl rounded-[32px] p-8 md:p-12 shadow-[0_0_40px_rgba(0,0,0,0.2)] ${
                 darkMode
-                  ? "bg-white/10 backdrop-blur-2xl text-white"
-                  : "bg-white text-black"
+                  ? "bg-[#1c1c1e]/90 backdrop-blur-3xl text-white border border-white/10"
+                  : "bg-white/90 backdrop-blur-3xl text-black border border-black/5"
               }`}
+              style={{ willChange: "transform, opacity" }} // Optimization hint for browsers
             >
-              <div className="flex justify-between items-start mb-8">
-                <h2 className="text-3xl font-semibold tracking-tight">
+              <div className="flex justify-between items-start mb-6">
+                <h2 className="text-3xl font-semibold tracking-tight leading-tight pr-4">
                   {selectedService.title}
                 </h2>
 
                 <button
                   onClick={() => setSelectedService(null)}
-                  className="p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition"
+                  className={`p-2 rounded-full transition-colors flex-shrink-0 ${
+                    darkMode ? "bg-white/10 hover:bg-white/20" : "bg-black/5 hover:bg-black/10"
+                  }`}
                 >
-                  <Close />
+                  <Close fontSize="small" />
                 </button>
               </div>
 
-              <p className="mb-8 text-lg opacity-80">
+              <p className="mb-8 text-[1.1rem] leading-relaxed opacity-80">
                 {selectedService.desc}
               </p>
 
-              <ul className="space-y-4">
-                {selectedService.details.map((item, i) => (
-                  <motion.li
-                    key={i}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    className="flex items-start gap-3"
-                  >
-                    <span className="w-2 h-2 mt-2 rounded-full bg-current opacity-60" />
-                    {item}
-                  </motion.li>
-                ))}
-              </ul>
+              <div className="space-y-4">
+                <h4 className="font-semibold text-sm uppercase tracking-wider opacity-60 mb-2">
+                  Key Deliverables
+                </h4>
+                <ul className="space-y-3">
+                  {selectedService.details.map((item, i) => (
+                    <motion.li
+                      key={i}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      // Staggered list items make the entrance feel organic
+                      transition={{ delay: i * 0.04 + 0.1, ...fadeTransition }}
+                      className="flex items-start gap-3 text-[1.05rem]"
+                    >
+                      <span className="w-1.5 h-1.5 mt-2.5 rounded-full bg-current opacity-60 flex-shrink-0" />
+                      {item}
+                    </motion.li>
+                  ))}
+                </ul>
+              </div>
             </motion.div>
           </motion.div>
         )}

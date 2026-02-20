@@ -1,15 +1,26 @@
-import React, { useRef, useState, useEffect, useCallback } from "react"
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+} from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronLeft, ChevronRight, Plus, X } from "lucide-react"
 
+/* ------------------ Animation ------------------ */
+
 const spring = {
   type: "spring",
-  stiffness: 220,
-  damping: 26,
-  mass: 0.9,
+  stiffness: 260,
+  damping: 28,
+  mass: 0.8,
 }
 
 const easing = [0.16, 1, 0.3, 1]
+
+/* ------------------ Card Styles ------------------ */
 
 const cardColors = [
   { bg: "#000000", text: "text-white", button: "light" },
@@ -19,56 +30,56 @@ const cardColors = [
 ]
 
 const portfolio = [
+ {
+  id: 1,
+  title: "Tax Act",
+  category: "FinTech",
+  image: "/website1.png",
+  description:
+    "A smart tax management and comparison platform that simplifies filing, analyzes tax options, and helps users make informed financial decisions with clarity and confidence.",
+  link: "https://tax-act.vercel.app/",
+  ...cardColors[0],
+},
   {
-    id: 1,
-    title: "Quantum UI Framework",
-    category: "Web Design",
-    image: "/website1.png",
-    description:
-      "Next-gen interface system leveraging quantum computing principles.",
-    link: "https://tax-act.vercel.app/",
-    ...cardColors[0],
-  },
+  id: 2,
+  title: "MatchPass",
+  category: "Sports Tech",
+  image: "/football.png",
+  description:
+    "An online football ticketing system that enables fans to browse fixtures, select seats in real-time, and securely purchase match tickets through a seamless digital platform.",
+  link: "https://ticketmasters.vercel.app/",
+  ...cardColors[1],
+},
   {
-    id: 2,
-    title: "Neural Commerce App",
-    category: "Mobile App",
-    image: "/camera4.webp",
-    description:
-      "Thought-controlled shopping experience with biometric feedback.",
-    link: "https://echelon-ecommerce-platform.onrender.com/",
-    ...cardColors[1],
-  },
+  id: 3,
+  title: "Echelon Store",
+  category: "E-Commerce",
+  image: "/ecommerce.png",
+  description:
+    "A modern e-commerce platform designed for seamless product browsing, secure online payments, and a smooth shopping experience across all devices.",
+  link: "https://echelon-ecommerce-platform.onrender.com/",
+  ...cardColors[2],
+},
   {
-    id: 3,
-    title: "Marketing Suite",
-    category: "Marketing",
-    image: "/website2.png",
-    description:
-      "Self-optimizing campaign system with predictive analytics.",
-    link: "https://echelon-ecommerce-platform.onrender.com/",
-    ...cardColors[2],
-  },
-  {
-    id: 4,
-    title: "Digital Branding",
-    category: "Branding",
-    image: "/website1.png",
-    description:
-      "3D identity system for spatial computing platforms.",
-    link: "https://echelon-ecommerce-platform.onrender.com/",
-    ...cardColors[3],
-  },
+  id: 4,
+  title: "Alumni Website",
+  category: "Education",
+  image: "/alumni.png",
+  description:
+    "A modern alumni engagement platform designed to connect graduates, share updates, manage events, and strengthen community networks.",
+  link: "https://katcherian.com/",
+  ...cardColors[3],
+},
 ]
 
-/* ------------------ Modal ------------------ */
+/* ===========================
+   Modal (Shared Layout)
+=========================== */
 
 const PortfolioModal = ({ item, onClose }) => {
   useEffect(() => {
     document.body.style.overflow = "hidden"
-    return () => {
-      document.body.style.overflow = ""
-    }
+    return () => (document.body.style.overflow = "")
   }, [])
 
   return (
@@ -77,105 +88,124 @@ const PortfolioModal = ({ item, onClose }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.25 }}
     >
       {/* Backdrop */}
       <motion.div
         onClick={onClose}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.3 }}
         className="absolute inset-0 bg-black/50 backdrop-blur-xl"
       />
 
-      {/* Modal Card */}
+      {/* Shared Layout Container */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.94, y: 30 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.96, y: 20 }}
+        layoutId={`card-${item.id}`}
         transition={spring}
-        className="relative z-10 w-full max-w-xl bg-white rounded-[28px] sm:rounded-[32px] overflow-hidden
-                  shadow-[0_40px_120px_rgba(0,0,0,0.25)]
-                  will-change-transform transform-gpu"
+        className="relative z-10 w-full max-w-2xl rounded-[32px] overflow-hidden
+                   shadow-[0_40px_120px_rgba(0,0,0,0.25)] bg-white"
       >
-        {/* Close Button */}
         <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.92 }}
-          transition={{ duration: 0.2 }}
           onClick={onClose}
-          className="absolute top-5 right-5 sm:top-6 sm:right-6 w-9 h-9 rounded-full 
-                    bg-black/5 backdrop-blur-md 
-                    flex items-center justify-center
-                    hover:bg-black/10 transition"
+          className="absolute top-6 right-6 w-9 h-9 rounded-full
+                     bg-black/5 backdrop-blur-md
+                     flex items-center justify-center hover:bg-black/10"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
         >
           <X size={18} />
         </motion.button>
 
-        {/* Image Section */}
-        <div
-          className="h-[240px] sm:h-[320px] flex items-end justify-center"
+        {/* Shared Image */}
+        <motion.div
+          layoutId={`image-${item.id}`}
+          className="h-[320px] flex items-end justify-center"
           style={{ backgroundColor: item.bg }}
         >
-          <motion.img
-            initial={{ scale: 1.05 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.8, ease: easing }}
+          <img
             src={item.image}
             alt={item.title}
             className="h-full object-contain object-bottom"
           />
-        </div>
+        </motion.div>
 
-        {/* Content */}
-        <div className="p-6 sm:p-10">
-          <p className="text-sm text-gray-500 mb-2 tracking-wide">
-            {item.category}
-          </p>
-          <h3 className="text-2xl sm:text-3xl font-semibold mb-4 tracking-tight">
+        <div className="p-10">
+          <p className="text-sm text-gray-500 mb-2">{item.category}</p>
+          <h3 className="text-3xl font-semibold mb-4 tracking-tight">
             {item.title}
           </h3>
-          <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
+          <p className="text-gray-600 leading-relaxed">
             {item.description}
           </p>
 
-          <motion.a
-            whileHover={{ y: -2 }}
-            whileTap={{ scale: 0.98 }}
+          <a
             href={item.link}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block mt-6 text-sm font-medium underline"
           >
             View Project →
-          </motion.a>
+          </a>
         </div>
       </motion.div>
     </motion.div>
   )
 }
 
-/* ------------------ Main Component ------------------ */
+/* ===========================
+   Main Component
+=========================== */
 
 const NextureWork = () => {
   const carouselRef = useRef(null)
   const [active, setActive] = useState(0)
   const [selectedItem, setSelectedItem] = useState(null)
+  const cardRefs = useRef([])
+
+  /* ---------------------------
+     Precise Scroll Logic
+  --------------------------- */
 
   const scrollToIndex = useCallback((index) => {
-    const el = carouselRef.current
-    if (!el) return
-    const card = el.querySelector("[data-snap]")
-    if (!card) return
+    const container = carouselRef.current
+    const card = cardRefs.current[index]
+    if (!container || !card) return
 
-    const cardWidth = card.offsetWidth
-    const gap = window.innerWidth < 640 ? 24 : 32
-
-    el.scrollTo({
-      left: index * (cardWidth + gap),
+    container.scrollTo({
+      left: card.offsetLeft,
       behavior: "smooth",
     })
+  }, [])
+
+  /* ---------------------------
+     Active Index Detection
+  --------------------------- */
+
+  useEffect(() => {
+    const container = carouselRef.current
+    if (!container) return
+
+    let raf
+
+    const onScroll = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        const scrollLeft = container.scrollLeft
+
+        let closestIndex = 0
+        let minDistance = Infinity
+
+        cardRefs.current.forEach((card, i) => {
+          const distance = Math.abs(card.offsetLeft - scrollLeft)
+          if (distance < minDistance) {
+            minDistance = distance
+            closestIndex = i
+          }
+        })
+
+        setActive(closestIndex)
+      })
+    }
+
+    container.addEventListener("scroll", onScroll, { passive: true })
+    return () => container.removeEventListener("scroll", onScroll)
   }, [])
 
   const handlePrev = () =>
@@ -184,93 +214,62 @@ const NextureWork = () => {
   const handleNext = () =>
     scrollToIndex(Math.min(portfolio.length - 1, active + 1))
 
-  useEffect(() => {
-    const el = carouselRef.current
-    if (!el) return
-
-    const onScroll = () => {
-      const card = el.querySelector("[data-snap]")
-      if (!card) return
-
-      const cardWidth = card.offsetWidth
-      const gap = window.innerWidth < 640 ? 24 : 32
-      const index = Math.round(el.scrollLeft / (cardWidth + gap))
-      setActive(index)
-    }
-
-    el.addEventListener("scroll", onScroll, { passive: true })
-    return () => el.removeEventListener("scroll", onScroll)
-  }, [])
-
   return (
     <section className="py-24 sm:py-32 bg-[#f5f5f7]">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
 
-        <h2 className="text-3xl sm:text-5xl font-semibold text-black text-center mb-16 sm:mb-24 tracking-tight">
+        <h2 className="text-5xl font-semibold text-black text-center mb-24 tracking-tight">
           Selected Work.
         </h2>
 
         <div className="relative">
           <div
             ref={carouselRef}
-            className="overflow-x-auto scrollbar-none snap-x snap-mandatory 
-                       grid grid-flow-col 
+            className="overflow-x-auto scrollbar-none snap-x snap-mandatory
+                       grid grid-flow-col
                        auto-cols-[85%] sm:auto-cols-[420px] lg:auto-cols-[380px]
-                       gap-6 sm:gap-8 lg:gap-10"
+                       gap-8"
           >
             {portfolio.map((item, i) => (
               <motion.div
                 key={item.id}
-                data-snap
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05, ease: easing }}
-                viewport={{ once: true }}
+                ref={(el) => (cardRefs.current[i] = el)}
+                layoutId={`card-${item.id}`}
                 whileHover={{ y: -10 }}
-                className="snap-center relative rounded-[24px] sm:rounded-[28px] overflow-hidden 
-                           h-[420px] sm:h-[460px] group cursor-pointer 
+                transition={spring}
+                onClick={() => setSelectedItem(item)}
+                className="snap-start relative rounded-[28px]
+                           h-[460px] group cursor-pointer
                            shadow-[0_10px_40px_rgba(0,0,0,0.08)]
                            hover:shadow-[0_20px_60px_rgba(0,0,0,0.15)]
-                           transition-shadow duration-500
-                           will-change-transform transform-gpu"
+                           transition-shadow duration-500"
                 style={{ backgroundColor: item.bg }}
-                onClick={() => setSelectedItem(item)}
               >
-                <div className={`p-6 sm:p-8 relative z-10 ${item.text}`}>
+                <div className={`p-8 relative z-10 ${item.text}`}>
                   <p className="text-sm opacity-80 mb-2">
                     {item.category}
                   </p>
-                  <h3 className="text-xl sm:text-2xl font-semibold tracking-tight">
+                  <h3 className="text-2xl font-semibold tracking-tight">
                     {item.title}
                   </h3>
                 </div>
 
                 <motion.div
+                  layoutId={`image-${item.id}`}
                   className="absolute inset-x-0 bottom-0 h-4/5 pointer-events-none"
-                  whileHover={{ scale: 1.04 }}
-                  transition={{ duration: 0.6, ease: easing }}
                 >
                   <img
                     src={item.image}
                     alt={item.title}
-                    loading="lazy"
                     className="w-full h-full object-contain object-bottom"
                   />
                 </motion.div>
 
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  whileHover={{ opacity: 1 }}
-                  className="absolute inset-0 bg-black/5 transition"
-                />
-
                 <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.92 }}
-                  className={`absolute bottom-6 right-6 sm:bottom-8 sm:right-8 w-10 h-10 sm:w-11 sm:h-11 rounded-full
+                  className={`absolute bottom-8 right-8 w-11 h-11 rounded-full
                     flex items-center justify-center shadow-xl
-                    opacity-0 group-hover:opacity-100
-                    transition duration-300 ${
+                    opacity-0 group-hover:opacity-100 transition
+                    ${
                       item.button === "dark"
                         ? "bg-black text-white"
                         : "bg-white text-black"
@@ -283,12 +282,11 @@ const NextureWork = () => {
           </div>
 
           {/* Controls */}
-          <div className="flex justify-between items-center mt-10 sm:mt-14">
+          <div className="flex justify-between items-center mt-14">
             <button
               onClick={handlePrev}
-              className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white shadow-md
-                        flex items-center justify-center
-                        hover:shadow-lg transition"
+              className="w-11 h-11 rounded-full bg-white shadow-md
+                         flex items-center justify-center hover:shadow-lg"
             >
               <ChevronLeft size={18} />
             </button>
@@ -309,9 +307,8 @@ const NextureWork = () => {
 
             <button
               onClick={handleNext}
-              className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white shadow-md
-                        flex items-center justify-center
-                        hover:shadow-lg transition"
+              className="w-11 h-11 rounded-full bg-white shadow-md
+                         flex items-center justify-center hover:shadow-lg"
             >
               <ChevronRight size={18} />
             </button>
@@ -319,7 +316,7 @@ const NextureWork = () => {
         </div>
       </div>
 
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         {selectedItem && (
           <PortfolioModal
             item={selectedItem}
